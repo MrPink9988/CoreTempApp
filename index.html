@@ -1,0 +1,187 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CoreTemp</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background-color: #000;
+      color: #fff;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    h1 {
+      color: #ff1a1a;
+      margin: 1rem 0 0.5rem;
+    }
+
+    .icon-row {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin: 0.5rem 0 1rem;
+    }
+
+    .icon {
+      background-color: #1a1a1a;
+      border: 2px solid #ff1a1a;
+      border-radius: 1rem;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.5rem;
+      transition: transform 0.2s;
+    }
+
+    .icon:hover {
+      transform: scale(1.1);
+    }
+
+    .active {
+      background-color: #ff1a1a;
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .btn {
+      background: #1a1a1a;
+      border: 1px solid #ff1a1a;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: #ff1a1a;
+    }
+
+    .temp-display {
+      font-size: 3rem;
+      font-weight: bold;
+      margin: 1rem 0;
+    }
+
+    .toggle {
+      font-size: 0.9rem;
+      color: #ff1a1a;
+      cursor: pointer;
+    }
+
+    @media (max-width: 500px) {
+      .icon {
+        width: 50px;
+        height: 50px;
+      }
+      .temp-display {
+        font-size: 2.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Choose your protein:</h1>
+  <div class="icon-row">
+    <div class="icon" data-type="Beef" title="Beef">🐄</div>
+    <div class="icon" data-type="Pork" title="Pork">🐖</div>
+    <div class="icon" data-type="Chicken" title="Chicken">🐓</div>
+    <div class="icon" data-type="Fish" title="Fish">🐟</div>
+  </div>
+
+  <div id="cutButtons" class="buttons"></div>
+  <div id="temp" class="temp-display"></div>
+  <div class="toggle" onclick="toggleUnit()">Switch to °<span id="unitToggle">F</span></div>
+
+  <script>
+    const data = {
+      Beef: [
+        ["Rare", 51],
+        ["Medium Rare", 56],
+        ["Medium", 61.5],
+        ["Medium Well", 66],
+        ["Well Done", 70],
+      ],
+      Pork: [
+        ["Tenderloin / Loin (juicy)", 61.5],
+        ["Shoulder (pulled pork)", 87.5],
+        ["Ribs", 82.5],
+        ["Minced / Sausages", 71],
+      ],
+      Chicken: [
+        ["Breast", 73],
+        ["Thigh / Drumstick (juicy)", 77.5],
+        ["Whole Chicken", 75],
+        ["Ground Chicken", 74],
+      ],
+      Fish: [
+        ["White Fish (e.g. cod)", 55],
+        ["Salmon (medium)", 51],
+        ["Tuna (rare)", 46.5],
+        ["Well Done (any fish)", 60],
+      ]
+    };
+
+    let currentUnit = localStorage.getItem('unit') || 'C';
+    let currentProtein = null;
+
+    function renderCuts(type) {
+      currentProtein = type;
+      document.querySelectorAll('.icon').forEach(el => el.classList.remove('active'));
+      document.querySelector(`.icon[data-type="${type}"]`).classList.add('active');
+
+      const container = document.getElementById('cutButtons');
+      container.innerHTML = '';
+      data[type].forEach(([label, tempC]) => {
+        const btn = document.createElement('button');
+        btn.className = 'btn';
+        btn.textContent = label;
+        btn.onclick = () => showTemp(tempC);
+        container.appendChild(btn);
+      });
+
+      document.getElementById('temp').textContent = '';
+    }
+
+    function showTemp(celsius) {
+      const temp = currentUnit === 'C' ? `${celsius.toFixed(1)} °C` : `${(celsius * 9/5 + 32).toFixed(1)} °F`;
+      document.getElementById('temp').textContent = temp;
+    }
+
+    function toggleUnit() {
+      currentUnit = currentUnit === 'C' ? 'F' : 'C';
+      localStorage.setItem('unit', currentUnit);
+      document.getElementById('unitToggle').textContent = currentUnit === 'C' ? 'F' : 'C';
+      if (currentProtein) renderCuts(currentProtein);
+    }
+
+    document.querySelectorAll('.icon').forEach(el =>
+      el.addEventListener('click', () => renderCuts(el.dataset.type))
+    );
+
+    document.getElementById('unitToggle').textContent = currentUnit === 'C' ? 'F' : 'C';
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+  </script>
+</body>
+</html>
