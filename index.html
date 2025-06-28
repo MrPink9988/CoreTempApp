@@ -2,141 +2,139 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="theme-color" content="#ff1a1a"/>
-  <link rel="manifest" href="manifest.json"/>
-  <link rel="apple-touch-icon" href="assets/icons/cow.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="CoreTemp">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#ff1a1a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="CoreTemp" />
+  <link rel="apple-touch-icon" href="app-icon-192.png" />
+  <link rel="manifest" href="manifest.json" />
   <title>CoreTemp</title>
   <style>
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: linear-gradient(160deg, #000000 0%, #1a0000 100%);
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(to bottom, #111, #222);
       color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      text-align: center;
       padding: 1rem;
     }
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-    .icon-row {
+    .icon-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
-      width: 100%;
-      max-width: 400px;
       margin-bottom: 2rem;
     }
     .icon {
-      background-color: #222;
-      border-radius: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-      cursor: pointer;
-      transition: background 0.2s ease;
+      background-color: transparent;
+      border: none;
+      padding: 0;
     }
     .icon img {
-      width: 60%;
+      width: 100%;
       height: auto;
     }
-    .icon.active {
-      background-color: #ff1a1a;
-    }
-    .button-row {
+    .cuts {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      width: 100%;
-      max-width: 400px;
+      gap: 0.5rem;
       margin-bottom: 2rem;
     }
-    .temp-display {
-      text-align: center;
-      margin: 2rem 0;
-      animation: popIn 0.4s ease;
+    .cuts button {
+      padding: 1rem;
+      background: #ff1a1a;
+      color: white;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      width: 100%;
     }
-    .temp-display .celsius {
+    #temperature {
       font-size: 4rem;
       font-weight: bold;
+      margin-bottom: 0.5rem;
+      transition: opacity 0.3s ease;
     }
-    .temp-display .fahrenheit {
+    #fahrenheit {
       font-size: 1.2rem;
       opacity: 0.7;
-    }
-    @keyframes popIn {
-      from { transform: scale(0.8); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+      transition: opacity 0.3s ease;
     }
   </style>
 </head>
 <body>
-  <!-- <h1>Choose your protein:</h1> -->
-  <div class="icon-row">
-    <div class="icon" data-type="Beef"><img src="assets/icons/cow.png" alt="Beef"></div>
-    <div class="icon" data-type="Pork"><img src="assets/icons/pig.png" alt="Pork"></div>
-    <div class="icon" data-type="Chicken"><img src="assets/icons/chicken.png" alt="Chicken"></div>
-    <div class="icon" data-type="Fish"><img src="assets/icons/fish.png" alt="Fish"></div>
+  <h1>Choose your protein:</h1>
+  <div class="icon-grid">
+    <button class="icon" onclick="selectProtein('Beef')">
+      <img src="assets/icons/cow.png" alt="Beef" />
+    </button>
+    <button class="icon" onclick="selectProtein('Pork')">
+      <img src="assets/icons/pig.png" alt="Pork" />
+    </button>
+    <button class="icon" onclick="selectProtein('Chicken')">
+      <img src="assets/icons/chicken.png" alt="Chicken" />
+    </button>
+    <button class="icon" onclick="selectProtein('Fish')">
+      <img src="assets/icons/fish.png" alt="Fish" />
+    </button>
   </div>
-
-  <div class="button-row" id="options"></div>
-  <div class="temp-display" id="tempDisplay"></div>
+  <div class="cuts" id="cuts"></div>
+  <div id="temperature"></div>
+  <div id="fahrenheit"></div>
 
   <script>
     const data = {
-      Beef: [["Rare", 51], ["Medium Rare", 56], ["Medium", 62], ["Medium Well", 66], ["Well Done", 70]],
-      Pork: [["Tenderloin", 61], ["Shoulder", 87], ["Ribs", 83], ["Sausages", 71]],
-      Chicken: [["Breast", 73], ["Thigh", 77], ["Whole", 75], ["Ground", 74]],
-      Fish: [["White Fish", 55], ["Salmon", 51], ["Tuna", 47], ["Well Done", 60]]
+      Beef: {
+        "Rare": [51, 123],
+        "Medium Rare": [56, 133],
+        "Medium": [61, 143],
+        "Medium Well": [66, 151],
+        "Well Done": [70, 158]
+      },
+      Pork: {
+        "Tenderloin": [62, 144],
+        "Shoulder": [87, 189],
+        "Ribs": [83, 181],
+        "Sausages": [71, 160]
+      },
+      Chicken: {
+        "Breast": [73, 163],
+        "Thigh": [78, 172],
+        "Whole": [75, 167],
+        "Ground": [74, 165]
+      },
+      Fish: {
+        "White Fish": [55, 131],
+        "Salmon": [51, 124],
+        "Tuna": [47, 116],
+        "Well Done": [60, 140]
+      }
     };
 
-    let selectedType = null;
-
-    document.querySelectorAll('.icon').forEach(icon => {
-      icon.addEventListener('click', () => {
-        document.querySelectorAll('.icon').forEach(i => i.classList.remove('active'));
-        icon.classList.add('active');
-        selectedType = icon.getAttribute('data-type');
-        showOptions(selectedType);
-        navigator.vibrate?.(20);
-      });
-    });
-
-    function showOptions(type) {
-      const container = document.getElementById("options");
-      container.innerHTML = "";
-      data[type].forEach(([label, temp]) => {
+    function selectProtein(type) {
+      const cutsDiv = document.getElementById("cuts");
+      cutsDiv.innerHTML = "";
+      Object.keys(data[type]).forEach(cut => {
         const btn = document.createElement("button");
-        btn.textContent = label;
-        btn.style.backgroundColor = "#ff1a1a";
-        btn.style.color = "white";
-        btn.style.border = "none";
-        btn.style.borderRadius = "8px";
-        btn.style.padding = "1rem";
-        btn.style.fontSize = "1rem";
-        btn.style.cursor = "pointer";
-        btn.onclick = () => showTemperature(temp);
-        container.appendChild(btn);
+        btn.textContent = cut;
+        btn.onclick = () => showTemp(data[type][cut]);
+        cutsDiv.appendChild(btn);
       });
+      document.getElementById("temperature").innerHTML = "";
+      document.getElementById("fahrenheit").innerHTML = "";
     }
 
-    function showTemperature(tempC) {
-      const tempF = Math.round(tempC * 9/5 + 32);
-      const display = document.getElementById("tempDisplay");
-      display.innerHTML = `
-        <div class="celsius">${tempC} °C</div>
-        <div class="fahrenheit">${tempF} °F</div>
-      `;
-      display.classList.remove('popIn');
-      void display.offsetWidth;
-      display.classList.add('popIn');
-      navigator.vibrate?.(15);
+    function showTemp([c, f]) {
+      const temp = document.getElementById("temperature");
+      const fah = document.getElementById("fahrenheit");
+      temp.style.opacity = 0;
+      fah.style.opacity = 0;
+      setTimeout(() => {
+        temp.textContent = `${c} °C`;
+        fah.textContent = `${f} °F`;
+        temp.style.opacity = 1;
+        fah.style.opacity = 1;
+        if (window.navigator.vibrate) navigator.vibrate(50);
+      }, 100);
     }
   </script>
 </body>
