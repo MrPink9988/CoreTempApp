@@ -29,10 +29,11 @@
       border: none;
       border-radius: 12px;
       padding: 0.5rem;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
     }
     .icon.selected {
       background-color: #ff1a1a;
+      box-shadow: 0 0 12px #ff1a1a;
     }
     .icon img {
       width: 100%;
@@ -52,6 +53,11 @@
       border: none;
       border-radius: 8px;
       width: 100%;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .cuts button.selected {
+      background-color: #cc0000;
+      box-shadow: 0 0 10px #cc0000;
     }
     #temperature {
       font-size: 4rem;
@@ -67,7 +73,7 @@
   </style>
 </head>
 <body>
-  <h1>Choose your protein:</h1>
+  <!--<h1>Choose your protein:</h1>-->
   <div class="icon-grid">
     <button class="icon" onclick="selectProtein('Beef', this)">
       <img src="assets/icons/cow.png" alt="Beef" />
@@ -115,7 +121,17 @@
       }
     };
 
+    let currentProtein = null;
     function selectProtein(type, btn) {
+      if (currentProtein === type) {
+        document.querySelectorAll('.icon').forEach(el => el.classList.remove('selected'));
+        document.getElementById("cuts").innerHTML = "";
+        document.getElementById("temperature").innerHTML = "";
+        document.getElementById("fahrenheit").innerHTML = "";
+        currentProtein = null;
+        return;
+      }
+      currentProtein = type;
       document.querySelectorAll('.icon').forEach(el => el.classList.remove('selected'));
       btn.classList.add('selected');
 
@@ -124,7 +140,11 @@
       Object.keys(data[type]).forEach(cut => {
         const button = document.createElement("button");
         button.textContent = cut;
-        button.onclick = () => showTemp(data[type][cut]);
+        button.onclick = () => {
+          document.querySelectorAll(".cuts button").forEach(b => b.classList.remove("selected"));
+          button.classList.add("selected");
+          showTemp(data[type][cut]);
+        };
         cutsDiv.appendChild(button);
       });
 
