@@ -47,8 +47,7 @@
       height: auto;
     }
     .icon.active {
-      background-color: #ff1a1a; 
-
+      background-color: #ff1a1a;
     }
     .button-row {
       display: grid;
@@ -59,18 +58,17 @@
       margin-bottom: 2rem;
     }
     .temp-display {
-      font-size: 4rem;
-      font-weight: bold;
+      text-align: center;
       margin: 2rem 0;
       animation: popIn 0.4s ease;
     }
-    .unit-toggle {
-      background: none;
-      color: white;
-      border: 2px solid white;
-      border-radius: 5px;
-      padding: 0.5rem 1rem;
-      cursor: pointer;
+    .temp-display .celsius {
+      font-size: 4rem;
+      font-weight: bold;
+    }
+    .temp-display .fahrenheit {
+      font-size: 1.2rem;
+      opacity: 0.7;
     }
     @keyframes popIn {
       from { transform: scale(0.8); opacity: 0; }
@@ -89,7 +87,6 @@
 
   <div class="button-row" id="options"></div>
   <div class="temp-display" id="tempDisplay"></div>
-  <button class="unit-toggle" id="toggleUnit">Switch to °F</button>
 
   <script>
     const data = {
@@ -100,7 +97,6 @@
     };
 
     let selectedType = null;
-    let celsius = true;
 
     document.querySelectorAll('.icon').forEach(icon => {
       icon.addEventListener('click', () => {
@@ -130,25 +126,18 @@
       });
     }
 
-    function showTemperature(temp) {
+    function showTemperature(tempC) {
+      const tempF = Math.round(tempC * 9/5 + 32);
       const display = document.getElementById("tempDisplay");
-      const value = celsius ? `${temp} °C` : `${Math.round(temp * 9/5 + 32)} °F`;
-      display.textContent = value;
+      display.innerHTML = `
+        <div class="celsius">${tempC} °C</div>
+        <div class="fahrenheit">${tempF} °F</div>
+      `;
       display.classList.remove('popIn');
       void display.offsetWidth;
       display.classList.add('popIn');
       navigator.vibrate?.(15);
     }
-
-    document.getElementById("toggleUnit").addEventListener("click", () => {
-      celsius = !celsius;
-      document.getElementById("toggleUnit").textContent = celsius ? "Switch to °F" : "Switch to °C";
-      const current = document.getElementById("tempDisplay").textContent;
-      if (current) {
-        const temp = parseInt(current);
-        showTemperature(celsius ? (temp - 32) * 5/9 : temp);
-      }
-    });
   </script>
 </body>
 </html>
