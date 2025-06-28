@@ -25,9 +25,14 @@
       margin-bottom: 2rem;
     }
     .icon {
-      background-color: transparent;
+      background-color: #333;
       border: none;
-      padding: 0;
+      border-radius: 12px;
+      padding: 0.5rem;
+      transition: background-color 0.3s ease;
+    }
+    .icon.selected {
+      background-color: #ff1a1a;
     }
     .icon img {
       width: 100%;
@@ -64,16 +69,16 @@
 <body>
   <h1>Choose your protein:</h1>
   <div class="icon-grid">
-    <button class="icon" onclick="selectProtein('Beef')">
+    <button class="icon" onclick="selectProtein('Beef', this)">
       <img src="assets/icons/cow.png" alt="Beef" />
     </button>
-    <button class="icon" onclick="selectProtein('Pork')">
+    <button class="icon" onclick="selectProtein('Pork', this)">
       <img src="assets/icons/pig.png" alt="Pork" />
     </button>
-    <button class="icon" onclick="selectProtein('Chicken')">
+    <button class="icon" onclick="selectProtein('Chicken', this)">
       <img src="assets/icons/chicken.png" alt="Chicken" />
     </button>
-    <button class="icon" onclick="selectProtein('Fish')">
+    <button class="icon" onclick="selectProtein('Fish', this)">
       <img src="assets/icons/fish.png" alt="Fish" />
     </button>
   </div>
@@ -110,15 +115,19 @@
       }
     };
 
-    function selectProtein(type) {
+    function selectProtein(type, btn) {
+      document.querySelectorAll('.icon').forEach(el => el.classList.remove('selected'));
+      btn.classList.add('selected');
+
       const cutsDiv = document.getElementById("cuts");
       cutsDiv.innerHTML = "";
       Object.keys(data[type]).forEach(cut => {
-        const btn = document.createElement("button");
-        btn.textContent = cut;
-        btn.onclick = () => showTemp(data[type][cut]);
-        cutsDiv.appendChild(btn);
+        const button = document.createElement("button");
+        button.textContent = cut;
+        button.onclick = () => showTemp(data[type][cut]);
+        cutsDiv.appendChild(button);
       });
+
       document.getElementById("temperature").innerHTML = "";
       document.getElementById("fahrenheit").innerHTML = "";
     }
@@ -133,7 +142,7 @@
         fah.textContent = `${f} °F`;
         temp.style.opacity = 1;
         fah.style.opacity = 1;
-        if (window.navigator.vibrate) navigator.vibrate(50);
+        if (navigator.vibrate) navigator.vibrate(50);
       }, 100);
     }
   </script>
