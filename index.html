@@ -6,43 +6,56 @@
   <title>CoreTemp</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#000000">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🔥</text></svg>">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="CoreTemp">
   <style>
     body {
       margin: 0;
-      font-family: system-ui, sans-serif;
-      background-color: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+      background: linear-gradient(160deg, #000000 0%, #1a0000 100%);
+      background-attachment: fixed;
+      background-size: cover;
       color: #fff;
       text-align: center;
       display: flex;
       flex-direction: column;
       min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
     }
 
     h1 {
-      color: #ff1a1a;
-      margin: 1rem 0 0.5rem;
+      font-size: 2rem;
+      font-weight: 600;
+      color: #fff;
+      margin: 2rem 0 1rem;
     }
 
     .icon-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.5rem;
-      margin: 0.5rem 1rem 1rem;
+      gap: 1rem;
+      padding: 0 1.5rem;
     }
 
     .icon {
-      background-color: transparent;
-      border: none;
-      border-radius: 0;
+      background-color: #111;
+      border-radius: 1.5rem;
       width: 100%;
-      aspect-ratio: 1 / 1;
-      font-size: 3rem;
+      aspect-ratio: 1/1;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: transform 0.2s;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    .icon svg {
+      width: 50%;
+      height: 50%;
+      stroke: white;
     }
 
     .icon:hover {
@@ -51,28 +64,30 @@
 
     .active {
       background-color: #ff1a1a;
-      border-radius: 1rem;
     }
 
     .buttons {
       display: flex;
       flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 0.5rem;
-      margin: 1rem;
+      justify-content: center;
+      gap: 1rem;
+      margin: 2rem 1rem;
     }
 
     .btn {
       background: #1a1a1a;
-      border: 1px solid #ff1a1a;
-      border-radius: 8px;
+      border: none;
+      border-radius: 1rem;
       padding: 1rem;
       cursor: pointer;
-      transition: background 0.2s;
+      font-size: 1rem;
+      font-weight: 500;
       flex: 1 1 48%;
       max-width: 48%;
       box-sizing: border-box;
       color: white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+      transition: background 0.2s ease;
     }
 
     .btn:hover {
@@ -81,8 +96,8 @@
 
     .temp-display {
       font-size: 5rem;
-      font-weight: bold;
-      margin: 2rem 0;
+      font-weight: 700;
+      margin: 2rem 1rem;
       color: white;
       animation: popIn 0.3s ease-out;
     }
@@ -90,8 +105,14 @@
     .toggle {
       font-size: 1rem;
       color: white;
+      opacity: 0.8;
       cursor: pointer;
       margin-bottom: 2rem;
+      transition: opacity 0.2s;
+    }
+
+    .toggle:hover {
+      opacity: 1;
     }
 
     @keyframes popIn {
@@ -100,8 +121,9 @@
     }
 
     @media (max-width: 500px) {
-      .icon {
-        font-size: 2.5rem;
+      .icon svg {
+        width: 60%;
+        height: 60%;
       }
 
       .temp-display {
@@ -118,10 +140,32 @@
 <body>
   <h1>Choose your protein:</h1>
   <div class="icon-row">
-    <div class="icon" data-type="Beef" title="Beef">🐄</div>
-    <div class="icon" data-type="Pork" title="Pork">🐖</div>
-    <div class="icon" data-type="Chicken" title="Chicken">🐓</div>
-    <div class="icon" data-type="Fish" title="Fish">🐟</div>
+    <div class="icon" data-type="Beef" title="Beef">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+        <path d="M2 9l2 1 1-2 2-1 1 1h5l1-1 2 1 1 2 2-1 1 1v4l-2 2v3h-2v-2h-8v2H6v-3l-2-2V10z"/>
+        <circle cx="7" cy="15" r="1"/><circle cx="17" cy="15" r="1"/>
+      </svg>
+    </div>
+    <div class="icon" data-type="Pork" title="Pork">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+        <path d="M2 12h2a7 7 0 0014 0h4v-2h-4a7 7 0 00-14 0H2v2z"/>
+        <circle cx="8" cy="12" r="1"/><circle cx="16" cy="12" r="1"/>
+        <path d="M4 15v2m16-2v2"/>
+      </svg>
+    </div>
+    <div class="icon" data-type="Chicken" title="Chicken">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+        <path d="M9 4l-1 3 2 1-1 2 2 2-1 2h-2v2H4v2h5a7 7 0 0011-7v-1l2-2-2-2v-2l-3-3h-3z"/>
+        <circle cx="15" cy="8" r="1"/>
+      </svg>
+    </div>
+    <div class="icon" data-type="Fish" title="Fish">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+        <path d="M2 12s3-5 10-5 10 5 10 5-3 5-10 5S2 12 2 12z"/>
+        <circle cx="16" cy="12" r="1"/>
+        <path d="M2 12h20"/>
+      </svg>
+    </div>
   </div>
 
   <div id="cutButtons" class="buttons"></div>
@@ -130,31 +174,10 @@
 
   <script>
     const data = {
-      Beef: [
-        ["Rare", 51],
-        ["Medium Rare", 56],
-        ["Medium", 61.5],
-        ["Medium Well", 66],
-        ["Well Done", 70],
-      ],
-      Pork: [
-        ["Tenderloin / Loin (juicy)", 61.5],
-        ["Shoulder (pulled pork)", 87.5],
-        ["Ribs", 82.5],
-        ["Minced / Sausages", 71],
-      ],
-      Chicken: [
-        ["Breast", 73],
-        ["Thigh / Drumstick (juicy)", 77.5],
-        ["Whole Chicken", 75],
-        ["Ground Chicken", 74],
-      ],
-      Fish: [
-        ["White Fish (e.g. cod)", 55],
-        ["Salmon (medium)", 51],
-        ["Tuna (rare)", 46.5],
-        ["Well Done (any fish)", 60],
-      ]
+      Beef: [["Rare", 51], ["Medium Rare", 56], ["Medium", 61.5], ["Medium Well", 66], ["Well Done", 70]],
+      Pork: [["Tenderloin / Loin (juicy)", 61.5], ["Shoulder (pulled pork)", 87.5], ["Ribs", 82.5], ["Minced / Sausages", 71]],
+      Chicken: [["Breast", 73], ["Thigh / Drumstick (juicy)", 77.5], ["Whole Chicken", 75], ["Ground Chicken", 74]],
+      Fish: [["White Fish (e.g. cod)", 55], ["Salmon (medium)", 51], ["Tuna (rare)", 46.5], ["Well Done (any fish)", 60]]
     };
 
     let currentUnit = localStorage.getItem('unit') || 'C';
@@ -164,17 +187,18 @@
       currentProtein = type;
       document.querySelectorAll('.icon').forEach(el => el.classList.remove('active'));
       document.querySelector(`.icon[data-type="${type}"]`).classList.add('active');
-
       const container = document.getElementById('cutButtons');
       container.innerHTML = '';
       data[type].forEach(([label, tempC]) => {
         const btn = document.createElement('button');
         btn.className = 'btn';
         btn.textContent = label;
-        btn.onclick = () => showTemp(tempC);
+        btn.onclick = () => {
+          if (navigator.vibrate) navigator.vibrate(30);
+          showTemp(tempC);
+        };
         container.appendChild(btn);
       });
-
       document.getElementById('temp').textContent = '';
     }
 
@@ -183,7 +207,7 @@
       const tempDisplay = document.getElementById('temp');
       tempDisplay.textContent = temp;
       tempDisplay.style.animation = 'none';
-      void tempDisplay.offsetWidth; // trigger reflow
+      void tempDisplay.offsetWidth;
       tempDisplay.style.animation = 'popIn 0.3s ease-out';
     }
 
@@ -197,11 +221,15 @@
     document.querySelectorAll('.icon').forEach(el =>
       el.addEventListener('click', () => {
         renderCuts(el.dataset.type);
-        if (window.navigator.vibrate) navigator.vibrate(30);
+        if (navigator.vibrate) navigator.vibrate(30);
       })
     );
 
     document.getElementById('unitToggle').textContent = currentUnit === 'C' ? 'F' : 'C';
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
   </script>
 </body>
 </html>
